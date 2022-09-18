@@ -48,7 +48,10 @@ def delete_city_id(city_id):
 def post_city(state_id):
     """ end point to add new cities according to their given state """
     state = storage.get(State, state_id)
-    transform = request.get_json()
+    try:
+        transform = request.get_json()
+    except Exception:
+        return jsonify({'error': 'Not a JSON'}), 400
 
     if state is None:
         abort(404)
