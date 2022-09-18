@@ -32,11 +32,11 @@ def states_id(state_id=None):
     if state_id is None:
         abort(404)
 
-    states = storage.all("State").values()
+    state = storage.get(State, state_id)
 
-    for state in states:
-        if state_id == state.id:
-            return jsonify(state.to_dict())
+    if state is not None:
+        return jsonify(state.to_dict())
+
     abort(404)
 
 
