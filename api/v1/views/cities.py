@@ -9,7 +9,9 @@ from models.state import State
 from models.city import City
 
 
-@app_views.route("/states/<state_id>/cities", methods=['GET'])
+@app_views.route("/states/<state_id>/cities",
+                 methods=['GET'],
+                 strict_slashes=False)
 def states_id_cities(state_id):
     """ endpoint to return state ids for your city """
     query = storage.get(State, state_id)
@@ -22,7 +24,9 @@ def states_id_cities(state_id):
     abort(404)
 
 
-@app_views.route("/cities/<city_id>", methods=['GET'])
+@app_views.route("/cities/<city_id>",
+                 methods=['GET'],
+                 strict_slashes=False)
 def cities_id(city_id):
     """ endpoint to return city ids """
     cityID = storage.get(City, city_id)
@@ -32,7 +36,9 @@ def cities_id(city_id):
     abort(404)
 
 
-@app_views.route("/cities/<city_id>", methods=['DELETE'])
+@app_views.route("/cities/<city_id>",
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def delete_city_id(city_id):
     """ endpoint to delete according to its cities id """
     city = storage.get(City, city_id)
@@ -44,7 +50,9 @@ def delete_city_id(city_id):
     abort(404)
 
 
-@app_views.route("/states/<state_id>/cities", methods=['POST'])
+@app_views.route("/states/<state_id>/cities",
+                 methods=['POST'],
+                 strict_slashes=False)
 def post_city(state_id):
     """ end point to add new cities according to their given state """
     state = storage.get(State, state_id)
@@ -67,7 +75,9 @@ def post_city(state_id):
         return jsonify(newCity.to_dict()), 201
 
 
-@app_views.route("/cities/<city_id>", methods=['PUT'])
+@app_views.route("/cities/<city_id>",
+                 methods=['PUT'],
+                 strict_slashes=False)
 def put_city(city_id):
     """ end point to update cities """
     city = storage.get(City, city_id)
