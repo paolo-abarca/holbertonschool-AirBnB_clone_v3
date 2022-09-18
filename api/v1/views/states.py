@@ -99,4 +99,4 @@ def states_put(state_id=None):
             setattr(state, key, value)
 
     state.save()
-    return jsonify(state.to_dict())
+    return jsonify(state.to_dict()), 200
