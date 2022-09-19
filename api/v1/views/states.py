@@ -29,6 +29,9 @@ def states_id(state_id=None):
     """
     Retrieves a State object
     """
+    if state_id is None:
+        abort(404)
+
     state = storage.get(State, state_id)
 
     if state is not None:
@@ -43,6 +46,9 @@ def states_delete(state_id=None):
     """
     Deletes a State object
     """
+    if state_id is None:
+        abort(404)
+
     state = storage.get(State, state_id)
 
     if state is not None:
@@ -66,7 +72,8 @@ def states_post():
         return jsonify({"error": "Missing name"}), 400
 
     state_new = State(**json_data)
-    state_new.save()
+    storage.new(state_new)
+    storage.save()
 
     return jsonify(state_new.to_dict()), 201
 
