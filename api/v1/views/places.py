@@ -30,7 +30,7 @@ def cities_id_places(city_id):
 
 @app_views.route("/places/<place_id>", methods=['GET'],
                  strict_slashes=False)
-def place_id(place_id):
+def places_id(place_id):
     """
     Retrieves a Place object
     """
@@ -72,6 +72,12 @@ def post_place(city_id):
         abort(404)
     elif transform is None:
         return jsonify({'error': 'Not a JSON'}), 400
+    elif transform.get('user_id') is None:
+        return jsonify({'error': 'Missing user_id'}), 400
+
+    user = storage.get(User, transform.get('user_id'))
+    if user is None:
+        abort(404)
     elif transform.get('name') is None:
         return jsonify({'error': 'Missing name'}), 400
     else:
@@ -96,7 +102,7 @@ def put_place(place_id):
     elif transform is None:
         return jsonify({'error': 'Not a JSON'}), 400
     else:
-        keys = ['id', 'state_id', 'created_at', 'updated_at']
+        keys = ['id', 'user_id', 'city_id', 'created_at', 'updated_at']
         for key, value in transform.items():
             if key not in keys:
                 setattr(place, key, value)
