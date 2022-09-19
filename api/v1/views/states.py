@@ -10,7 +10,7 @@ from models import storage
 from models.state import State
 
 
-@app_views.route("/states", methods=["GET"], strict_slashes=False)
+@app_views.route("/states", methods=['GET'], strict_slashes=False)
 def states():
     """
     Retrieves the list of all State objects
@@ -24,7 +24,7 @@ def states():
     return jsonify(all_states)
 
 
-@app_views.route("/states/<state_id>", methods=["GET"], strict_slashes=False)
+@app_views.route("/states/<state_id>", methods=['GET'], strict_slashes=False)
 def states_id(state_id=None):
     """
     Retrieves a State object
@@ -40,7 +40,7 @@ def states_id(state_id=None):
     abort(404)
 
 
-@app_views.route("/states/<state_id>", methods=["DELETE"],
+@app_views.route("/states/<state_id>", methods=['DELETE'],
                  strict_slashes=False)
 def states_delete(state_id=None):
     """
@@ -58,7 +58,7 @@ def states_delete(state_id=None):
     abort(404)
 
 
-@app_views.route("/states", methods=["POST"], strict_slashes=False)
+@app_views.route("/states", methods=['POST'], strict_slashes=False)
 def states_post():
     """
     Creates a State
@@ -78,7 +78,7 @@ def states_post():
     return jsonify(state_new.to_dict()), 201
 
 
-@app_views.route("/states/<state_id>", methods=["PUT"], strict_slashes=False)
+@app_views.route("/states/<state_id>", methods=['PUT'], strict_slashes=False)
 def states_put(state_id=None):
     """
     Updates a State object
