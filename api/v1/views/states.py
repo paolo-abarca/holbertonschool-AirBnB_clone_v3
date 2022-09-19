@@ -16,7 +16,7 @@ def states():
     Retrieves the list of all State objects
     """
     all_states = []
-    states = storage.all("State").values()
+    states = storage.all(State).values()
 
     for state in states:
         all_states.append(state.to_dict())
