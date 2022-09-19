@@ -16,7 +16,7 @@ def states():
     Retrieves the list of all State objects
     """
     all_states = []
-    states = storage.all(State).values()
+    states = storage.all("State").values()
 
     for state in states:
         all_states.append(state.to_dict())
@@ -24,7 +24,8 @@ def states():
     return jsonify(all_states)
 
 
-@app_views.route("/states/<state_id>", methods=['GET'], strict_slashes=False)
+@app_views.route("/states/<state_id>", methods=['GET'],
+                 strict_slashes=False)
 def states_id(state_id=None):
     """
     Retrieves a State object
@@ -58,7 +59,8 @@ def states_delete(state_id=None):
     abort(404)
 
 
-@app_views.route("/states", methods=['POST'], strict_slashes=False)
+@app_views.route("/states", methods=['POST'],
+                 strict_slashes=False)
 def states_post():
     """
     Creates a State
@@ -68,35 +70,34 @@ def states_post():
     except Exception:
         return jsonify({"error": "Not a JSON"}), 400
 
-    if "name" not in json_data:
+    if json_data is None:
+        return jsonify({"error": "Not a JSON"}), 400
+    else json_data.get("name") is None:
         return jsonify({"error": "Missing name"}), 400
+    else:
+        state_new = State(**json_data)
+        storage.new(state_new)
+        storage.save()
+        return jsonify(state_new.to_dict()), 201
 
-    state_new = State(**json_data)
-    storage.new(state_new)
-    storage.save()
 
-    return jsonify(state_new.to_dict()), 201
-
-
-@app_views.route("/states/<state_id>", methods=['PUT'], strict_slashes=False)
+@app_views.route("/states/<state_id>", methods=['PUT'],
+                 strict_slashes=False)
 def states_put(state_id=None):
     """
     Updates a State object
     """
+    state = storage.get(State, state_id)
     json_data = request.get_json()
 
-    if json_data is None:
-        abort(400, "Not a JSON")
-
-    state = storage.get(State, state_id)
     if state is None:
         abort(404)
-
-    black_list = ["id", "created_at", "updated_at"]
-
-    for key, value in json_data.items():
-        if key not in black_list:
-            setattr(state, key, value)
-
-    state.save()
-    return jsonify(state.to_dict()), 200
+    elif json_data is None:
+        return jsonify({"error": "Not a JSON"}), 400
+    else:
+        black_list = ["id", "created_at", "updated_at"]
+        for key, value in json_data.items():
+            if key not in black_list:
+                setattr(state, key, value)
+        state.save()
+        return jsonify(state.to_dict()), 200
