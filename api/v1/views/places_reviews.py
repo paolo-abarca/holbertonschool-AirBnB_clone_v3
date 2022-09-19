@@ -60,7 +60,6 @@ def delete_review(review_id):
 def post_review(place_id):
     """ end point to add new review according to their given places """
     placeId = storage.get(Place, place_id)
-
     try:
         data_json = request.get_json()
     except Exception:
@@ -91,7 +90,6 @@ def post_review(place_id):
                  strict_slashes=False)
 def put_review(review_id):
     """ end point to update review """
-
     reviewId = storage.get(Review, review_id)
     data_json = request.get_json()
 
