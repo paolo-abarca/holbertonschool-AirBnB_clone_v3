@@ -10,7 +10,7 @@ from models import storage
 from models.state import State
 
 
-@app_views.route("/states/", methods=["GET"], strict_slashes=False)
+@app_views.route("/states", methods=["GET"], strict_slashes=False)
 def states():
     """
     Retrieves the list of all State objects
@@ -63,13 +63,13 @@ def states_post():
     """
     Creates a State
     """
-    json_data = request.get_json()
-
-    if json_data is None:
-        abort(400, "Not a JSON")
+    try:
+        json_data = request.get_json()
+    except Exception:
+        return jsonify({"error": "Not a JSON"}), 400
 
     if "name" not in json_data:
-        abort(400, "Missing name")
+        return jsonify({"error": "Missing name"}), 400
 
     state_new = State(**json_data)
     state_new.save()
@@ -85,7 +85,7 @@ def states_put(state_id=None):
     json_data = request.get_json()
 
     if json_data is None:
-        abort(404, "Not a JSON")
+        abort(400, "Not a JSON")
 
     state = storage.get(State, state_id)
     if state is None:
