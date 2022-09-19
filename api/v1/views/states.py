@@ -72,7 +72,7 @@ def states_post():
 
     if json_data is None:
         return jsonify({"error": "Not a JSON"}), 400
-    else json_data.get("name") is None:
+    elif json_data.get("name") is None:
         return jsonify({"error": "Missing name"}), 400
     else:
         state_new = State(**json_data)
