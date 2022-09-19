@@ -29,9 +29,6 @@ def states_id(state_id=None):
     """
     Retrieves a State object
     """
-    if state_id is None:
-        abort(404)
-
     state = storage.get(State, state_id)
 
     if state is not None:
@@ -46,9 +43,6 @@ def states_delete(state_id=None):
     """
     Deletes a State object
     """
-    if state_id is None:
-        abort(404)
-
     state = storage.get(State, state_id)
 
     if state is not None:
