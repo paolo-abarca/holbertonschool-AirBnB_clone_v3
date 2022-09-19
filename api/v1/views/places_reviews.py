@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-    Create a new view for Review object that handles all
+    Create a new view for  Review object that handles all
     default RESTFul API actions
 """
 
