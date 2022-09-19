@@ -31,7 +31,7 @@ def place_id_reviews(place_id):
 @app_views.route("/reviews/<review_id>",
                  methods=['GET'],
                  strict_slashes=False)
-def review_id(review_id):
+def reviews_id(review_id):
     """ endpoint to return review id """
     reviewId = storage.get(Review, review_id)
 
