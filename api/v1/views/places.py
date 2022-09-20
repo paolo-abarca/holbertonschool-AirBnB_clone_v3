@@ -56,36 +56,32 @@ def delete_place_id(place_id):
     abort(404)
 
 
-@app_views.route("/cities/<city_id>/places", methods=['POST'],
+@app_views.route("/cities/<city_id>/places", methods=["POST"],
                  strict_slashes=False)
-def post_place(city_id):
+def place_create(city_id):
     """
-    Creates a Place
+    Creates a place
     """
-    city = storage.get(City, city_id)
-    try:
-        transform = request.get_json()
-    except Exception:
-        return jsonify({'error': 'Not a JSON'}), 400
-
-    if city is None:
+    place_json = request.get_json(silent=True)
+    if place_json is None:
+        abort(400, 'Not a JSON')
+    if not storage.get("User", place_json["user_id"]):
         abort(404)
-    elif transform is None:
-        return jsonify({'error': 'Not a JSON'}), 400
-    elif transform['user_id'] is None:
-        return jsonify({'error': 'Missing user_id'}), 400
-
-    user = storage.get(User, transform['user_id'])
-    if user is None:
+    if not storage.get("City", city_id):
         abort(404)
-    elif transform['name'] is None:
-        return jsonify({'error': 'Missing name'}), 400
-    else:
-        newPlace = Place(**transform)
-        newPlace.city_id = city_id
-        storage.new(newPlace)
-        storage.save()
-        return jsonify(newPlace.to_dict()), 201
+    if "user_id" not in place_json:
+        abort(400, 'Missing user_id')
+    if "name" not in place_json:
+        abort(400, 'Missing name')
+
+    place_json["city_id"] = city_id
+
+    new_place = Place(**place_json)
+    new_place.save()
+    resp = jsonify(new_place.to_json())
+    resp.status_code = 201
+
+    return resp
 
 
 @app_views.route("/places/<place_id>", methods=['PUT'],
