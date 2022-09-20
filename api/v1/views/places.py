@@ -10,6 +10,7 @@ from flask import jsonify, abort, request
 from models import storage
 from models.place import Place
 from models.city import City
+from models.user import User
 
 
 @app_views.route("/cities/<city_id>/places", methods=['GET'],
@@ -68,15 +69,15 @@ def post_place(city_id):
     except Exception:
         return jsonify({'error': 'Not a JSON'}), 400
 
+    userId = storage.get(User, transform.get('user_id'))
+
     if city is None:
         abort(404)
     elif transform is None:
         return jsonify({'error': 'Not a JSON'}), 400
     elif transform.get('user_id') is None:
         return jsonify({'error': 'Missing user_id'}), 400
-
-    user = storage.get(User, transform.get('user_id'))
-    if user is None:
+    elif userId is None:
         abort(404)
     elif transform.get('name') is None:
         return jsonify({'error': 'Missing name'}), 400
