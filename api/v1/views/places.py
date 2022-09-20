@@ -5,8 +5,9 @@ all default RESTFul API actions
 """
 
 from os import abort
-from api.v1.views import app_views, storage
+from api.v1.views import app_views
 from flask import jsonify, abort, request
+from models import storage
 from models.place import Place
 from models.city import City
 
@@ -55,32 +56,36 @@ def delete_place_id(place_id):
     abort(404)
 
 
-@app_views.route("/cities/<city_id>/places", methods=["POST"],
+@app_views.route("/cities/<city_id>/places", methods=['POST'],
                  strict_slashes=False)
-def place_create(city_id):
+def post_place(city_id):
     """
-    Creates a place
+    Creates a Place
     """
-    place_json = request.get_json(silent=True)
-    if place_json is None:
-        abort(400, 'Not a JSON')
-    if not storage.get("User", place_json["user_id"]):
+    city = storage.get(City, city_id)
+    try:
+        transform = request.get_json()
+    except Exception:
+        return jsonify({'error': 'Not a JSON'}), 400
+
+    if city is None:
         abort(404)
-    if not storage.get("City", city_id):
+    elif transform is None:
+        return jsonify({'error': 'Not a JSON'}), 400
+    elif transform.get('user_id') is None:
+        return jsonify({'error': 'Missing user_id'}), 400
+
+    user = storage.get(User, transform.get('user_id'))
+    if user is None:
         abort(404)
-    if "user_id" not in place_json:
-        abort(400, 'Missing user_id')
-    if "name" not in place_json:
-        abort(400, 'Missing name')
-
-    place_json["city_id"] = city_id
-
-    new_place = Place(**place_json)
-    new_place.save()
-    resp = jsonify(new_place.to_json())
-    resp.status_code = 201
-
-    return resp
+    elif transform.get('name') is None:
+        return jsonify({'error': 'Missing name'}), 400
+    else:
+        newPlace = Place(**transform)
+        newPlace.city_id = city_id
+        storage.new(newPlace)
+        storage.save()
+        return jsonify(newPlace.to_dict()), 201
 
 
 @app_views.route("/places/<place_id>", methods=['PUT'],
