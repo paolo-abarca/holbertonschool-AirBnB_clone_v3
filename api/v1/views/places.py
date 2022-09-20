@@ -62,30 +62,26 @@ def post_place(city_id):
     """
     Creates a Place
     """
-    city = storage.get(City, city_id)
     try:
         transform = request.get_json()
     except Exception:
         return jsonify({'error': 'Not a JSON'}), 400
 
-    if city is None:
+    if not storage.get("User", transform["user_id"]):
         abort(404)
-    elif transform is None:
-        return jsonify({'error': 'Not a JSON'}), 400
-    elif transform.get('user_id') is None:
+    if not storage.get("City", city_id):
+        abort(404)
+    if "user_id" not in transform:
         return jsonify({'error': 'Missing user_id'}), 400
-
-    user = storage.get(User, transform.get('user_id'))
-    if user is None:
-        abort(404)
-    elif transform.get('name') is None:
+    if "name" not in transform:
         return jsonify({'error': 'Missing name'}), 400
-    else:
-        newPlace = Place(**transform)
-        newPlace.city_id = city_id
-        storage.new(newPlace)
-        storage.save()
-        return jsonify(newPlace.to_dict()), 201
+
+    transform["city_id"] = city_id
+
+    newPlace = Place(**transform)
+    storage.new(newPlace)
+    storage.save()
+    return jsonify(newPlace.to_dict()), 201
 
 
 @app_views.route("/places/<place_id>", methods=['PUT'],
